@@ -317,6 +317,13 @@ def generate_response(instruction, input_text=""):
 
     return clean_response(assistant_reply)
 ```
+----
+## 🖼️ Symptom-Based Medical Image Generation (Stable Diffusion)
+
+
+
+
+
 
 ----
 
@@ -341,4 +348,16 @@ Training outputs, including accuracy/loss curves and segmentation results, are s
 #### Result from **CuraBot system**
 
 ![image](https://github.com/user-attachments/assets/0bbe91ff-bd4b-47f4-a564-029f45cbc07f)
+
+
+----
+
+
+
+
+https://github.com/user-attachments/assets/ab00faac-fadd-499d-9f28-8f269cb911ef
+
+
+
+
 
