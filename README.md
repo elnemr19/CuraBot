@@ -262,8 +262,78 @@ To evaluate the impact of integrating RAG into our medical chatbot, we tested se
 #### 📈 Conclusion
 Our goal wasn’t to replace the base model — which is already high-performing — but to equip it with external knowledge for more context-aware, nuanced, and human-like responses. RAG made a noticeable improvement without compromising the model's original quality.
 
----
+
+## 🧠 Memory-Enabled Conversations
+In addition to Retrieval-Augmented Generation (RAG), we added **conversation memory** to simulate a continuous, context-aware chat with the user.
+
+This feature allows the model to **remember previous interactions** within a session — which is crucial for maintaining relevance in long or multi-turn medical consultations.
+
+#### ✅ Benefits:
+
+- Remembers previous symptoms, questions, or clarifications
+
+- Responds with context, reducing repetition
+
+- Creates a smoother, more human conversation flow
+
+### 🧩 Implementation Snippet:
+
+```python
+conversation_history = []
+
+def generate_response(instruction, input_text=""):
+    # Append user input to history
+    user_entry = f"<|im_start|>user\n{instruction}\n{input_text}<|im_end|>"
+    conversation_history.append(user_entry)
+
+    # Build prompt by combining system prompt + all conversation turns
+    system_prompt = "<|im_start|>system\nYou are a helpful medical assistant.<|im_end|>"
+    assistant_prompt_start = "<|im_start|>assistant\n"
+
+    # Combine full prompt
+    full_prompt = system_prompt + "\n" + "\n".join(conversation_history) + "\n" + assistant_prompt_start
+
+    inputs = tokenizer(full_prompt, return_tensors="pt", truncation=True, max_length=2048).to(model.device)
+
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=512,
+        temperature=0.7,
+        top_p=0.9,
+        do_sample=True,
+        pad_token_id=tokenizer.eos_token_id
+    )
+
+    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    # Extract assistant reply and add it to history
+    assistant_reply = decoded[len(full_prompt):].strip()
+    conversation_history.append(assistant_reply + "<|im_end|>")
+
+    return clean_response(assistant_reply)
+```
+
+----
+
+## 🧠 Brain Tumor Segmentation (YOLOv11)
+
+In this component of our system, we perform **brain tumor segmentation** using the **YOLOv11** segmentation model. This allows users to upload medical images (such as X-rays), and the model will automatically identify and segment tumor regions.
+
+#### 📦 Dataset
+We trained the model on a custom [brain tumor dataset](https://universe.roboflow.com/instant-8qfjt/brain-tumor-yzzav-gfuc5) uploaded via **Roboflow**. The dataset includes labeled medical images with annotated tumor regions for segmentation.
 
 
+#### 🏋️ Model Training
+We used the `yolo11s-seg.pt` pre-trained weights for segmentation and fine-tuned them on our dataset:
 
+```python
+yolo task=segment mode=train model=yolo11s-seg.pt data={dataset.location}/data.yaml epochs=60 imgsz=640 plots=True
+```
+
+Training outputs, including accuracy/loss curves and segmentation results, are saved to `runs/segment/train`
+
+
+#### Result from **CuraBot system**
+
+![image](https://github.com/user-attachments/assets/0bbe91ff-bd4b-47f4-a564-029f45cbc07f)
 
