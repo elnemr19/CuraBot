@@ -1,6 +1,11 @@
 # CuraBot: A Medical AI Assistant System
 
+![image](https://github.com/user-attachments/assets/77827795-f577-47dd-9040-982a38138842)
+
+
+
 CuraBot is an intelligent medical assistant system designed to enhance healthcare support through three integrated modules. The first module is **a Medical Chatbot**, built using large language models (LLMs) fine-tuned on medical data to deliver accurate and conversational responses to a wide range of health-related queries. The second module is **Symptom-Based Image Generation**, which leverages a diffusion model to generate medical illustrations based on user-provided symptom descriptions—offering a visual understanding of potential conditions. The third module focuses on **Brain Tumor Segmentation**, utilizing a fine-tuned YOLOv11 model trained on a custom dataset to detect and segment brain tumors from MRI scans with high precision. Together, these modules form a comprehensive AI-driven system aimed at improving medical awareness, diagnostic support, and user engagement in healthcare.
+
 
 
 ## 📌 Project Structure
