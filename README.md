@@ -143,4 +143,127 @@ Markdown(response)  # This will render **bold** text as actual bold
 - **Fields**: instruction, input, output
 
 
+## 🔄 Model Comparison & Enhancements
+
+### 🤖 Why Qwen Over LLaMA?
+
+After fine-tuning both models — **Qwen2.5-3B-Instruct** and Meta **LLaMA 3.1-8B** — we chose to move forward with Qwen for deployment due to its computational efficiency, requiring roughly `one-third` of the resources compared to LLaMA.
+While LLaMA offers slightly better performance, **Qwen delivers high-quality responses with significantly lower hardware costs, making it ideal for accessible and scalable deployment**.
+
+
+## 🎤 Voice Input with Whisper
+
+To improve user interaction and accessibility, we integrated speech-to-text functionality using **OpenAI's Whisper** model. Users can now speak or type their medical queries.
+
+```python
+import gradio as gr
+import whisper
+
+# Load the Whisper model
+model = whisper.load_model("base")
+
+def transcribe_audio(audio_file_path):
+    if audio_file_path is None:
+        return "No audio input provided."
+    result = model.transcribe(audio_file_path)
+    return result["text"]
+
+interface = gr.Interface(
+    fn=transcribe_audio,
+    inputs=gr.Audio(sources=["microphone", "upload"], type="filepath"),
+    outputs="text",
+    title="Whisper Speech-to-Text",
+    description="🎤 Speak or upload audio to convert speech to text with Whisper.",
+    live=True
+)
+
+interface.launch(share=True)
+```
+
+This enhancement offers a more **inclusive** and **user-friendly experience** for individuals with typing limitations or accessibility needs.
+
+## 🧠 RAG (Retrieval-Augmented Generation)
+
+To further improve response quality and context understanding, we implemented a **RAG (Retrieval-Augmented Generation)** pipeline. This combines our fine-tuned language model with a **knowledge retriever** that sources real-time answers from an external medical dataset.
+
+- **Knowledge Base Dataset Used**:
+
+[ai-medical-chatbot](https://www.kaggle.com/datasets/yousefsaeedian/ai-medical-chatbot)
+
+This is distinct from the dataset used for fine-tuning (ChatDoctor-HealthCareMagic-100k), allowing us to **benefit from broader medical coverage and real-time grounding**.
+
+**✅ Impact of RAG Integration**
+
+We compared the model’s output **before and after RAG**, and found that:
+
+- 🧠 Contextual relevance improved noticeably
+
+- 💬 Answers became more accurate and grounded
+
+- 📚 Model hallucination was reduced
+
+### 🔍 Comparison: Before vs After Using RAG (Retrieval-Augmented Generation)
+
+To evaluate the impact of integrating RAG into our medical chatbot, we tested several user queries and compared responses generated **with and without RAG**.
+
+#### Example Query: *"What causes high blood pressure?"*
+
+##### 🧠 Baseline Response (Without RAG):
+> High blood pressure, also known as hypertension, can be caused by a variety of factors. It is often described as a "silent killer" because many people with high blood pressure don't experience any symptoms. Here are the main causes:
+>
+> - Age
+> - Family History
+> - Inactivity
+> - Overweight or Obesity
+> - Poor Diet (high in salt and cholesterol)
+> - Too Much Alcohol
+> - Smoking
+> - Stress
+> - Certain Medical Conditions (e.g., kidney disease, thyroid disorders)
+>
+> While some of these risk factors can be controlled, others are not. Sometimes, the cause is not clear, known as "essential hypertension."
+
+##### 📚 Response with RAG:
+> High blood pressure, also known as hypertension, can be caused by:
+>
+> - Age and genetics
+> - Unhealthy Diet: Processed foods high in sodium
+> - Lack of physical activity
+> - Smoking and excessive alcohol use
+> - Obesity, especially central obesity
+> - Stress (triggering episodes)
+> - Medical conditions like thyroid disorders, kidney disease, and sleep apnea
+> - Certain medications (e.g., NSAIDs, decongestants, antidepressants)
+>
+> ⚠️ *RAG-enhanced model also gives practical advice:* "Given your specific case, it's important to discuss symptoms and history with a healthcare provider."
+
+##### 🔍 Retrieved Chunks (RAG Context Summary):
+1. User with unexplained blood pressure spikes, seeking clarity.
+2. Young adult with high BP and no known history.
+3. Female with endometriosis and BP concerns.
+4. Individual reporting high BP with no lifestyle changes.
+5. 26-year-old male with consistent hypertension and normal cholesterol.
+
+---
+
+##### 🧠 How RAG Helps a Good Model
+
+| Aspect              | Fine-Tuned Qwen (No RAG)                                 | Qwen + RAG (With Retrieval)                                            |
+| ------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Accuracy**        | Already strong, with medically correct general responses | Maintains accuracy, adds reference-based credibility                   |
+| **Depth**           | Good depth from training data, though slightly generic   | Greater depth using retrieved patient cases and specific examples      |
+| **Personalization** | Responds generally to all users                          | Adds a personal tone by referencing similar past patient experiences   |
+| **Context Recall**  | Limited to what the model learned during fine-tuning     | Gains the ability to include external facts or up-to-date medical info |
+| **Clarity**         | Clear and structured explanations                        | Still clear, but with added real-life context for better understanding |
+
+
+
+
+#### 📈 Conclusion
+Our goal wasn’t to replace the base model — which is already high-performing — but to equip it with external knowledge for more context-aware, nuanced, and human-like responses. RAG made a noticeable improvement without compromising the model's original quality.
+
+---
+
+
+
 
