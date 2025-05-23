@@ -319,10 +319,66 @@ def generate_response(instruction, input_text=""):
 ```
 ----
 ## 🖼️ Symptom-Based Medical Image Generation (Stable Diffusion)
+This module introduces a text-to-image diffusion model fine-tuned using LoRA (Low-Rank Adaptation) on top of CompVis/stable-diffusion-v1-4 for the task of medical image generation. It generates X-ray, CT, or MRI scans based on natural language symptom descriptions, enabling a novel way to visualize potential diagnostic outcomes.
+### What is this model?
+- A domain-adapted diffusion model capable of producing realistic medical scans conditioned on symptom-based prompts. Fine-tuned using LoRA, it leverages:
+- Efficient training without modifying the original model weights.
+- Domain adaptation to a highly-specialized medical dataset.
+- Preservation of high-fidelity generative capabilities from the base model.
+### Key features
+- Symptom-to-scan generation using natural language inputs.
+- Multi-modality support: Generates X-rays, CTs, or MRIs depending on the prompt.
+- Realistic medical imaging trained on curated real-world data.
+### Example usage
+**Requirements**
+
+```python
+pip install diffusers accelerate transformers torch
+```
+**Inference code**
+```python
+from diffusers import DiffusionPipeline
+
+# Load base model
+pipe = DiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
+# Load medical LoRA weights
+pipe.load_lora_weights("Osama03/Medical-X-ray-image-generation-stable-diffusion")
+
+# Symptom prompt
+prompt = (
+    "Hey doc, I've been feeling really out of breath lately, especially when I'm walking up a flight "
+    "of stairs or doing some light exercise. It's like my chest gets tight and I can't catch my breath. "
+    "I've also been coughing up some stuff that's not quite right, it's been a few weeks now. "
+    "And I've noticed a bit of weight loss, I'm not sure if that's related but it's been on my mind. "
+    "I've been to a few doctors already, but they haven't been able to figure out what's going on. "
+    "I'm hoping you can help."
+)
+
+# Generate image
+image = pipe(prompt).images[0]
+
+# Save locally
+image.save("output.png")
+```
 
 
+### Use cases
+| Application Area         | Description                                                                        |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| **Medical Research**     | Generate synthetic datasets for testing or model training.                         |
+| **Education & Training** | Help students visualize how different symptoms relate to diagnostic imaging.       |
+| **Prototype Testing**    | Evaluate pipelines on realistic, privacy-safe data.                                |
+| **Data Augmentation**    | Expand datasets for training classification or segmentation models.                |
+| **Prompt Exploration**   | See how variations in symptoms influence generated scan types and characteristics. |
 
 
+### Model details
+| Component         | Description                                                                             |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| **Base Model**    | [`CompVis/stable-diffusion-v1-4`](https://huggingface.co/CompVis/stable-diffusion-v1-4) |
+| **Fine-tuning**   | LoRA (Low-Rank Adaptation)                                                              |
+| **Training Data** | Curated symptom-to-image dataset for X-rays, CTs, and MRIs                              |
+| **Frameworks**    | PyTorch, 🤗 Diffusers                                                                   |
 
 
 ----
