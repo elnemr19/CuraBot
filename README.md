@@ -380,6 +380,8 @@ image.save("output.png")
 | **Training Data** | Curated symptom-to-image dataset for X-rays, CTs, and MRIs                              |
 | **Frameworks**    | PyTorch, 🤗 Diffusers                                                                   |
 
+### Results from **Curabot system**
+![Generated X-ray](assets/example.png)
 
 ----
 
